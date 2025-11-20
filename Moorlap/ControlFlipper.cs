@@ -26,8 +26,6 @@ internal static class ControlFlipper
     {
         HeroActions ha = InputHandler.Instance.inputActions;
 
-        Log.LogInfo($"{IsFlipped()} {flipped}");
-
         if (IsFlipped() ^ flipped)
         {
             PlayerAction left = ha.Left;
@@ -37,8 +35,5 @@ internal static class ControlFlipper
         }
 
         ha.MoveVector.InvertXAxis = flipped;
-
-        Log.LogInfo($"{IsFlipped()} {flipped}");
     }
-
 }
