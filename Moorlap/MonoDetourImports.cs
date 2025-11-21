@@ -13,3 +13,4 @@ using MonoDetour.HookGen;
 [assembly: MonoDetourTargets(typeof(InventoryMapManager))]
 [assembly: MonoDetourTargets(typeof(GameMap))]
 [assembly: MonoDetourTargets(typeof(CheckpointSprite))]
+[assembly: MonoDetourTargets(typeof(MapMarkerMenu))]

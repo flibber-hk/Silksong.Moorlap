@@ -4,6 +4,8 @@ using Moorlap.Components;
 using System;
 using UnityEngine;
 using Silksong.UnityHelper.Extensions;
+using MonoDetour.Cil;
+using MonoMod.Cil;
 
 namespace Moorlap;
 
@@ -16,15 +18,36 @@ public partial class MoorlapPlugin : BaseUnityPlugin
     {
         Instance = this;
 
+        // Actually flip the main camera
         Md.GameCameras.Start.Postfix(FlipCameras);
+
+        // Flip controls when in game
         Md.HeroController.Start.Postfix(DoFlip);
         Md.HeroController.OnDestroy.Postfix(DoUnflip);
+
+        // Unflip controls when looking at an inventory pane or the map
         Md.InventoryPaneInput.PressDirection.Prefix(RemoveInvFlip);
+        Md.GameMap.Update.ILHook(ModifyMapControl);
+        Md.MapMarkerMenu.PanMap.ILHook(ModifyMapControl);
+
+        // Prevent saving the modified key bindings (this could be made better by only preventing saving horizontal binds)
         Md.InputHandler.SendKeyBindingsToGameSettings.ControlFlowPrefix(PreventSavingBindsHook);
         Md.InputHandler.SendButtonBindingsToGameSettings.ControlFlowPrefix(PreventSavingBindsHook);
+
+        // Avoid reflecting the audio from the save sprite
         Md.CheckpointSprite.Awake.Postfix(UnflipCheckpointSpriteAudiosource);
 
         Logger.LogInfo($"Plugin {Name} ({Id}) has loaded!");
+    }
+
+    private void ModifyMapControl(ILManipulationInfo info)
+    {
+        ILCursor cursor = new(info.Context);
+
+        while (cursor.TryGotoNext(MoveType.After, i => i.MatchCallOrCallvirt<InputHandler>(nameof(InputHandler.GetSticksInput))))
+        {
+            cursor.EmitDelegate<Func<Vector2, Vector2>>(v => new(-v.x, v.y));
+        }
     }
 
     private void UnflipCheckpointSpriteAudiosource(CheckpointSprite self)
