@@ -10,3 +10,6 @@ using MonoDetour.HookGen;
 [assembly: MonoDetourTargets(typeof(InventoryPaneBase))]
 [assembly: MonoDetourTargets(typeof(InventoryPaneInput))]
 [assembly: MonoDetourTargets(typeof(InputHandler), GenerateControlFlowVariants = true)]
+[assembly: MonoDetourTargets(typeof(InventoryMapManager))]
+[assembly: MonoDetourTargets(typeof(GameMap))]
+[assembly: MonoDetourTargets(typeof(CheckpointSprite))]

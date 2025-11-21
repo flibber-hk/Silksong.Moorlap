@@ -2,6 +2,7 @@
 
 namespace Moorlap.Components
 {
+    [RequireComponent(typeof(Camera))]
     public class MirrorFlipCamera : MonoBehaviour
     {
         Camera camera;

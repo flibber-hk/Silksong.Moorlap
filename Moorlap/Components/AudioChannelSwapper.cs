@@ -2,6 +2,9 @@
 
 namespace Moorlap.Components;
 
+/// <summary>
+/// Component which, when added to an audio source or listener, swaps the left and right channels.
+/// </summary>
 public class AudioChannelSwapper : MonoBehaviour
 {
     void OnAudioFilterRead(float[] data, int channels)

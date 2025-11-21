@@ -1,24 +1,35 @@
 using BepInEx;
 using MonoDetour.DetourTypes;
 using Moorlap.Components;
+using System;
 using UnityEngine;
+using Silksong.UnityHelper.Extensions;
 
 namespace Moorlap;
 
-// TODO - adjust the plugin guid as needed
 [BepInAutoPlugin(id: "io.github.flibber-hk.moorlap")]
 public partial class MoorlapPlugin : BaseUnityPlugin
 {
+    public static MoorlapPlugin Instance { get; private set; }
+
     private void Awake()
     {
+        Instance = this;
+
         Md.GameCameras.Start.Postfix(FlipCameras);
         Md.HeroController.Start.Postfix(DoFlip);
         Md.HeroController.OnDestroy.Postfix(DoUnflip);
         Md.InventoryPaneInput.PressDirection.Prefix(RemoveInvFlip);
         Md.InputHandler.SendKeyBindingsToGameSettings.ControlFlowPrefix(PreventSavingBindsHook);
         Md.InputHandler.SendButtonBindingsToGameSettings.ControlFlowPrefix(PreventSavingBindsHook);
+        Md.CheckpointSprite.Awake.Postfix(UnflipCheckpointSpriteAudiosource);
 
         Logger.LogInfo($"Plugin {Name} ({Id}) has loaded!");
+    }
+
+    private void UnflipCheckpointSpriteAudiosource(CheckpointSprite self)
+    {
+        self.audioSource.gameObject.GetOrAddComponent<AudioChannelSwapper>();
     }
 
     private ReturnFlow PreventSavingBindsHook(InputHandler self)
