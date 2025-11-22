@@ -1,11 +1,8 @@
 using BepInEx;
 using MonoDetour.DetourTypes;
 using Moorlap.Components;
-using System;
 using UnityEngine;
 using Silksong.UnityHelper.Extensions;
-using MonoDetour.Cil;
-using MonoMod.Cil;
 
 namespace Moorlap;
 
@@ -25,10 +22,11 @@ public partial class MoorlapPlugin : BaseUnityPlugin
         Md.HeroController.Start.Postfix(DoFlip);
         Md.HeroController.OnDestroy.Postfix(DoUnflip);
 
-        // Unflip controls when looking at an inventory pane or the map
+        // Unflip controls when looking at an inventory pane
         Md.InventoryPaneInput.PressDirection.Prefix(RemoveInvFlip);
-        Md.GameMap.Update.ILHook(ModifyMapControl);
-        Md.MapMarkerMenu.PanMap.ILHook(ModifyMapControl);
+
+        // Map stuff
+        MapFlipper.Hook();
 
         // Prevent saving the modified key bindings (this could be made better by only preventing saving horizontal binds)
         Md.InputHandler.SendKeyBindingsToGameSettings.ControlFlowPrefix(PreventSavingBindsHook);
@@ -38,16 +36,6 @@ public partial class MoorlapPlugin : BaseUnityPlugin
         Md.CheckpointSprite.Awake.Postfix(UnflipCheckpointSpriteAudiosource);
 
         Logger.LogInfo($"Plugin {Name} ({Id}) has loaded!");
-    }
-
-    private void ModifyMapControl(ILManipulationInfo info)
-    {
-        ILCursor cursor = new(info.Context);
-
-        while (cursor.TryGotoNext(MoveType.After, i => i.MatchCallOrCallvirt<InputHandler>(nameof(InputHandler.GetSticksInput))))
-        {
-            cursor.EmitDelegate<Func<Vector2, Vector2>>(v => new(-v.x, v.y));
-        }
     }
 
     private void UnflipCheckpointSpriteAudiosource(CheckpointSprite self)
