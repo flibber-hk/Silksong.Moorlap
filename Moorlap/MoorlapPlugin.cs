@@ -22,7 +22,7 @@ public partial class MoorlapPlugin : BaseUnityPlugin
         Md.HeroController.Start.Postfix(DoFlip);
         Md.HeroController.OnDestroy.Postfix(DoUnflip);
 
-        // Unflip controls when looking at an inventory pane
+        // Unflip controls when interacting with an inventory pane
         Md.InventoryPaneInput.PressDirection.Prefix(RemoveInvFlip);
 
         // Map stuff
