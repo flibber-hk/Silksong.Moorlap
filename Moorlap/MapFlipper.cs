@@ -1,14 +1,11 @@
 ﻿using BepInEx.Logging;
 using Mono.Cecil.Cil;
 using MonoDetour.Cil;
-using MonoDetour.DetourTypes;
 using MonoMod.Cil;
 using Moorlap.Components;
 using Silksong.UnityHelper.Extensions;
 using System;
-using System.Collections;
 using System.Linq;
-using TeamCherry.NestedFadeGroup;
 using UnityEngine;
 using Logger = BepInEx.Logging.Logger;
 using UObject = UnityEngine.Object;
