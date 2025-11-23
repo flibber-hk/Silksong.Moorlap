@@ -1,11 +1,14 @@
 ﻿using BepInEx.Logging;
 using Mono.Cecil.Cil;
 using MonoDetour.Cil;
+using MonoDetour.DetourTypes;
 using MonoMod.Cil;
 using Moorlap.Components;
 using Silksong.UnityHelper.Extensions;
 using System;
+using System.Collections;
 using System.Linq;
+using TeamCherry.NestedFadeGroup;
 using UnityEngine;
 using Logger = BepInEx.Logging.Logger;
 using UObject = UnityEngine.Object;
@@ -40,8 +43,38 @@ internal static class MapFlipper
         Md.InventoryItemWideMapZone.GetClosestNodePosLocalBounds.Prefix(FlipClosestNode);
 
         // Fix the wide map zoom
+        Md.InventoryMapManager.ZoomInRoutine.ILHookMoveNext(ModifyZoomInRoutine);
         Md.InventoryMapManager.ZoomOutRoutine.ILHookMoveNext(ModifyZoomOutRoutine);
-        // TODO - fix the zoom in routine
+    }
+
+    private static void ModifyZoomInRoutine(ILManipulationInfo info)
+    {
+        ILCursor cursor = new(info.Context);
+
+        while (cursor.TryGotoNext(
+            MoveType.Before,
+            i => i.MatchLdarg(0),
+            i => (
+                i.MatchLdfld(out var mapField)
+                && mapField.Name.Contains("zoneMap")
+                ),  // field on the compiler generated IEnumerator
+            i => i.MatchLdarg(0),
+            i => i.MatchLdfld(out _),
+            i => i.MatchLdarg(0),
+            i => i.MatchLdfld(out _),
+            i => i.MatchLdloc(out _),
+            i => i.MatchCall<Vector2>(nameof(Vector2.Lerp)),
+            i => i.MatchCall(typeof(Extensions), nameof(Extensions.SetLocalPosition2D))
+            ))
+        {
+            cursor.GotoNext();
+            cursor.GotoNext();
+            cursor.GotoNext();
+            cursor.GotoNext();
+            cursor.GotoNext();
+            cursor.GotoNext();
+            cursor.EmitDelegate<Func<Vector2, Vector2>>(vec => new(-vec.x, vec.y));
+        }
     }
 
     private static void ModifyZoomOutRoutine(ILManipulationInfo info)
