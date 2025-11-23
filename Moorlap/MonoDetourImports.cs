@@ -15,3 +15,4 @@ using MonoDetour.HookGen;
 [assembly: MonoDetourTargets(typeof(CheckpointSprite))]
 [assembly: MonoDetourTargets(typeof(MapMarkerMenu))]
 [assembly: MonoDetourTargets(typeof(InvMarkerCollide))]
+[assembly: MonoDetourTargets(typeof(InventoryWideMap))]

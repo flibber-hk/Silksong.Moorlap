@@ -4,7 +4,6 @@ using MonoDetour.Cil;
 using MonoMod.Cil;
 using Moorlap.Components;
 using Silksong.UnityHelper.Extensions;
-using System;
 using System.Linq;
 using UnityEngine;
 using Logger = BepInEx.Logging.Logger;
@@ -18,19 +17,62 @@ internal static class MapFlipper
 
     public static void Hook()
     {
+        
         // Flip the map cameras (does not cover the "wide map" aka the zoomed out map but I don't really care about that
         Md.InventoryMapManager.Awake.Prefix(FlipMapCams);
 
         // Make the left/right pan arrows disappear properly
         Md.GameMap.UpdatePanArrows.ILHook(SwapMapArrows);
 
-        // TODO - flip the text
-
         // Move the map marker cursor according to what they press
         Md.MapMarkerMenu.StartMarkerPlacement.Postfix(CreateVisualCursor);
         Md.MapMarkerMenu.PlaceMarker.ILHook(MovePlaceRemoveEffect);
         Md.MapMarkerMenu.RemoveMarker.ILHook(MovePlaceRemoveEffect);
         Md.MapMarkerMenu.Close.Postfix(DisableClone);
+
+        // Flip the text on the map
+        Md.GameMap.Awake.Postfix(FlipMapText);
+
+        // TODO - flip the wide map
+    }
+
+    private static TMProOld.TextAlignmentOptions FlipAlignment(TMProOld.TextAlignmentOptions alignment)
+    {
+        return alignment switch
+        {
+            TMProOld.TextAlignmentOptions.TopLeft => TMProOld.TextAlignmentOptions.TopRight,
+            TMProOld.TextAlignmentOptions.TopRight => TMProOld.TextAlignmentOptions.TopLeft,
+            TMProOld.TextAlignmentOptions.Left => TMProOld.TextAlignmentOptions.Right,
+            TMProOld.TextAlignmentOptions.Right => TMProOld.TextAlignmentOptions.Left,
+            TMProOld.TextAlignmentOptions.BottomLeft => TMProOld.TextAlignmentOptions.BottomRight,
+            TMProOld.TextAlignmentOptions.BottomRight => TMProOld.TextAlignmentOptions.BottomLeft,
+
+            TMProOld.TextAlignmentOptions.BaselineLeft => TMProOld.TextAlignmentOptions.BaselineRight,
+            TMProOld.TextAlignmentOptions.BaselineRight => TMProOld.TextAlignmentOptions.BaselineLeft,
+            TMProOld.TextAlignmentOptions.MidlineLeft => TMProOld.TextAlignmentOptions.MidlineRight,
+            TMProOld.TextAlignmentOptions.MidlineRight => TMProOld.TextAlignmentOptions.MidlineLeft,
+            TMProOld.TextAlignmentOptions.CaplineLeft => TMProOld.TextAlignmentOptions.CaplineRight,
+            TMProOld.TextAlignmentOptions.CaplineRight => TMProOld.TextAlignmentOptions.CaplineLeft,
+            _ => alignment
+        };
+    }
+
+    private static void FlipTextObject(TMProOld.TextMeshPro tmpro)
+    {
+        RectTransform rt = tmpro.gameObject.GetComponent<RectTransform>();
+        rt.FlipLocalScale(x: true);
+        tmpro.alignment = FlipAlignment(tmpro.alignment);
+        Vector4 vec = tmpro.margin;
+        tmpro.margin = new(vec.z, vec.y, vec.x, vec.w);
+        rt.pivot = new(1 - rt.pivot.x, rt.pivot.y);
+    }
+
+    private static void FlipMapText(GameMap self)
+    {
+        foreach (TMProOld.TextMeshPro tmpro in self.GetComponentsInChildren<TMProOld.TextMeshPro>(true))
+        {
+            FlipTextObject(tmpro);
+        }
     }
 
     private static void DisableClone(MapMarkerMenu self)
