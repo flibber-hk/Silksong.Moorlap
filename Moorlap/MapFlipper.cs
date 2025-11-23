@@ -68,6 +68,12 @@ internal static class MapFlipper
             Vector3 pos = iwmz.transform.position;
             iwmz.transform.position = new(-pos.x, pos.y, pos.z);
         }
+
+        foreach (QuestMapMarker qmm in wideMap.GetComponentsInChildren<QuestMapMarker>(true))
+        {
+            Vector3 pos = qmm.transform.position;
+            qmm.transform.position = new(-pos.x, pos.y, pos.z);
+        }
     }
 
     private static TMProOld.TextAlignmentOptions FlipAlignment(TMProOld.TextAlignmentOptions alignment)

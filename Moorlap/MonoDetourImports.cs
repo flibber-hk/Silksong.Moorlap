@@ -1,19 +1,11 @@
-﻿using InControl;
-using MonoDetour.HookGen;
+﻿using MonoDetour.HookGen;
 
-[assembly: MonoDetourTargets(typeof(UIManager))]
-[assembly: MonoDetourTargets(typeof(GameManager))]
 [assembly: MonoDetourTargets(typeof(GameCameras))]
 [assembly: MonoDetourTargets(typeof(HeroController))]
-[assembly: MonoDetourTargets(typeof(HeroActions))]
-[assembly: MonoDetourTargets(typeof(PlayerAction))]
-[assembly: MonoDetourTargets(typeof(InventoryPaneBase))]
 [assembly: MonoDetourTargets(typeof(InventoryPaneInput))]
 [assembly: MonoDetourTargets(typeof(InputHandler), GenerateControlFlowVariants = true)]
+[assembly: MonoDetourTargets(typeof(CheckpointSprite))]
 [assembly: MonoDetourTargets(typeof(InventoryMapManager))]
 [assembly: MonoDetourTargets(typeof(GameMap))]
-[assembly: MonoDetourTargets(typeof(CheckpointSprite))]
 [assembly: MonoDetourTargets(typeof(MapMarkerMenu))]
-[assembly: MonoDetourTargets(typeof(InvMarkerCollide))]
-[assembly: MonoDetourTargets(typeof(InventoryWideMap))]
 [assembly: MonoDetourTargets(typeof(InventoryItemWideMapZone))]
