@@ -2,7 +2,9 @@ using BepInEx;
 using MonoDetour.DetourTypes;
 using Moorlap.Components;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using Silksong.UnityHelper.Extensions;
+using System.Collections.Generic;
 
 namespace Moorlap;
 
@@ -20,7 +22,8 @@ public partial class MoorlapPlugin : BaseUnityPlugin
 
         // Flip controls when in game
         Md.HeroController.Start.Postfix(DoFlip);
-        Md.HeroController.OnDestroy.Postfix(DoUnflip);
+        // We can't use HC.OnDestroy because that is sometimes called mid-gameplay for some reason
+        SceneManager.activeSceneChanged += DoUnflip;
 
         // Unflip controls when interacting with an inventory pane
         Md.InventoryPaneInput.PressDirection.Prefix(RemoveInvFlip);
@@ -36,6 +39,22 @@ public partial class MoorlapPlugin : BaseUnityPlugin
         Md.CheckpointSprite.Awake.Postfix(UnflipCheckpointSpriteAudiosource);
 
         Logger.LogInfo($"Plugin {Name} ({Id}) has loaded!");
+    }
+
+    private static readonly HashSet<string> _menuScenes =
+    [
+        "quit_to_menu",
+        "menu_title"
+    ];
+
+    private void DoUnflip(Scene oldScene, Scene newScene)
+    {
+        string sceneName = newScene.name.ToLower();
+        
+        if (_menuScenes.Contains(sceneName))
+        {
+            ControlFlipper.SetFlippedControls(false);
+        }
     }
 
     private void UnflipCheckpointSpriteAudiosource(CheckpointSprite self)
@@ -72,7 +91,6 @@ public partial class MoorlapPlugin : BaseUnityPlugin
         }
     }
 
-    private void DoUnflip(HeroController self) => ControlFlipper.SetFlippedControls(false);
     private void DoFlip(HeroController self) => ControlFlipper.SetFlippedControls(true);
 
     private void FlipCameras(GameCameras self)
