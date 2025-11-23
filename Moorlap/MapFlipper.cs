@@ -4,6 +4,7 @@ using MonoDetour.Cil;
 using MonoMod.Cil;
 using Moorlap.Components;
 using Silksong.UnityHelper.Extensions;
+using System;
 using System.Linq;
 using UnityEngine;
 using Logger = BepInEx.Logging.Logger;
@@ -33,7 +34,40 @@ internal static class MapFlipper
         // Flip the text on the map
         Md.GameMap.Awake.Postfix(FlipMapText);
 
-        // TODO - flip the wide map
+        // Flip the wide map
+        Md.InventoryMapManager.Awake.Postfix(FlipWideMap);
+        Md.InventoryItemWideMapZone.GetNextSelectable.Prefix(ModifyWideMapNav);
+    }
+
+    private static void ModifyWideMapNav(InventoryItemWideMapZone self, ref InventoryItemManager.SelectionDirection direction)
+    {
+        InventoryItemManager.SelectionDirection dir = direction;
+        switch (dir)
+        {
+            case InventoryItemManager.SelectionDirection.Left:
+                direction = InventoryItemManager.SelectionDirection.Right;
+                break;
+            case InventoryItemManager.SelectionDirection.Right:
+                direction = InventoryItemManager.SelectionDirection.Left;
+                break;
+        }
+    }
+
+    private static void FlipWideMap(InventoryMapManager self)
+    {
+        InventoryWideMap wideMap = self.wideMap;
+
+        foreach (TMProOld.TextMeshPro tmpro in wideMap.GetComponentsInChildren<TMProOld.TextMeshPro>(true))
+        {
+            FlipTextObject(tmpro);
+        }
+
+        foreach (InventoryItemWideMapZone iwmz in wideMap.GetComponentsInChildren<InventoryItemWideMapZone>(true))
+        {
+            iwmz.gameObject.transform.FlipLocalScale(x: true);
+            Vector3 pos = iwmz.transform.position;
+            iwmz.transform.position = new(-pos.x, pos.y, pos.z);
+        }
     }
 
     private static TMProOld.TextAlignmentOptions FlipAlignment(TMProOld.TextAlignmentOptions alignment)
