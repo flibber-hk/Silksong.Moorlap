@@ -104,6 +104,7 @@ internal static class MapFlipper
             cursor.EmitDelegate<Func<Vector2, Vector2>>(vec => new(-vec.x, vec.y));
         }
     }
+
     private static void FlipClosestNode(InventoryItemWideMapZone self, ref Vector2 localBoundsPos)
     {
         localBoundsPos = new(1f - localBoundsPos.x, localBoundsPos.y);
