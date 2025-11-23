@@ -38,8 +38,39 @@ internal static class MapFlipper
         Md.InventoryMapManager.Awake.Postfix(FlipWideMap);
         Md.InventoryItemWideMapZone.GetNextSelectable.Prefix(ModifyWideMapNav);
         Md.InventoryItemWideMapZone.GetClosestNodePosLocalBounds.Prefix(FlipClosestNode);
+
+        // Fix the wide map zoom
+        Md.InventoryMapManager.ZoomOutRoutine.ILHookMoveNext(ModifyZoomOutRoutine);
+        // TODO - fix the zoom in routine
     }
 
+    private static void ModifyZoomOutRoutine(ILManipulationInfo info)
+    {
+        ILCursor cursor = new(info.Context);
+
+        while (cursor.TryGotoNext(
+            MoveType.Before,
+            i => i.MatchLdarg(0),
+            i => (
+                i.MatchLdfld(out var mapField)
+                && mapField.Name.Contains("zoneMap")
+                ),  // field on the compiler generated IEnumerator
+            i => i.MatchLdarg(0),
+            i => i.MatchLdfld(out _),
+            i => i.MatchLdarg(0),
+            i => i.MatchLdfld(out _),
+            i => i.MatchLdloc(out _),
+            i => i.MatchCall<Vector2>(nameof(Vector2.Lerp)),
+            i => i.MatchCall(typeof(Extensions), nameof(Extensions.SetLocalPosition2D))
+            ))
+        {
+            cursor.GotoNext();
+            cursor.GotoNext();
+            cursor.GotoNext();
+            cursor.GotoNext();
+            cursor.EmitDelegate<Func<Vector2, Vector2>>(vec => new(-vec.x, vec.y));
+        }
+    }
     private static void FlipClosestNode(InventoryItemWideMapZone self, ref Vector2 localBoundsPos)
     {
         localBoundsPos = new(1f - localBoundsPos.x, localBoundsPos.y);
