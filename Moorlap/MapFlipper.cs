@@ -37,6 +37,12 @@ internal static class MapFlipper
         // Flip the wide map
         Md.InventoryMapManager.Awake.Postfix(FlipWideMap);
         Md.InventoryItemWideMapZone.GetNextSelectable.Prefix(ModifyWideMapNav);
+        Md.InventoryItemWideMapZone.GetClosestNodePosLocalBounds.Prefix(FlipClosestNode);
+    }
+
+    private static void FlipClosestNode(InventoryItemWideMapZone self, ref Vector2 localBoundsPos)
+    {
+        localBoundsPos = new(1f - localBoundsPos.x, localBoundsPos.y);
     }
 
     private static void ModifyWideMapNav(InventoryItemWideMapZone self, ref InventoryItemManager.SelectionDirection direction)

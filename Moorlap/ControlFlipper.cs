@@ -15,18 +15,26 @@ internal static class ControlFlipper
     public static bool IsFlipped()
     {
         HeroActions ha = InputHandler.Instance.inputActions;
-        if (ha.Left.Name == "Left")
+
+        bool fromBinds = ha.Left.Name != "Left";
+        bool fromVector = ha.MoveVector.InvertXAxis;
+
+        if (fromBinds != fromVector)
         {
-            return false;
+            Log.LogWarning($"{nameof(IsFlipped)}: fromBinds {fromBinds}, fromVector {fromVector}");
         }
-        return true;
+
+        return fromBinds;
     }
 
     public static void SetFlippedControls(bool flipped)
     {
+        bool currentlyFlipped = IsFlipped();
         HeroActions ha = InputHandler.Instance.inputActions;
 
-        if (IsFlipped() ^ flipped)
+        Log.LogDebug($"Setting controls flipped: {flipped} (current {currentlyFlipped})");
+
+        if (currentlyFlipped ^ flipped)
         {
             PlayerAction left = ha.Left;
             PlayerAction right = ha.Right;
