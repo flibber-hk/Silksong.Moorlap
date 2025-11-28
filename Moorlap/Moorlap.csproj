@@ -43,7 +43,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Silksong.UnityHelper" Version="1.0.1" />
+    <PackageReference Include="Silksong.UnityHelper" Version="1.0.2" />
   </ItemGroup>
 
   <ItemGroup>
