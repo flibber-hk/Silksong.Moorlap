@@ -9,3 +9,4 @@
 [assembly: MonoDetourTargets(typeof(GameMap))]
 [assembly: MonoDetourTargets(typeof(MapMarkerMenu))]
 [assembly: MonoDetourTargets(typeof(InventoryItemWideMapZone))]
+[assembly: MonoDetourTargets(typeof(UIManager))]

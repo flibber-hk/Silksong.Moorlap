@@ -28,6 +28,10 @@ public partial class MoorlapPlugin : BaseUnityPlugin
         // Unflip controls when interacting with an inventory pane
         Md.InventoryPaneInput.PressDirection.Prefix(RemoveInvFlip);
 
+        // Manually unflip controls while paused because I don't want to deal with unity event systems
+        Md.UIManager.UIGoToPauseMenu.Postfix(_ => ControlFlipper.SetFlippedControls(false));
+        Md.UIManager.UIClosePauseMenu.Postfix(_ => ControlFlipper.SetFlippedControls(true));
+
         // Map stuff
         MapFlipper.Hook();
 
