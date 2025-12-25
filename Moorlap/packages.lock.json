@@ -42,19 +42,18 @@
       },
       "MonoDetour": {
         "type": "Direct",
-        "requested": "[*, 2.0.0)",
-        "resolved": "0.7.5",
-        "contentHash": "jbEm9x1VJVWurAKTiA8z7Ugb+N5ktH0jgvoIguVvn7tWwZ2COkfURN5ZaIM0bUG8Ze0S5OEIKXl5/bs5sYJj8g==",
+        "requested": "[0.7.9, 2.0.0)",
+        "resolved": "0.7.9",
+        "contentHash": "vTYpJxV51Tsjrycjt04bEGrKMIQqa/c8wf+KpqF2JhXu19ijG8k4cMeT2bXAOqCuy6e/7gn1eaBNM8yQKP847Q==",
         "dependencies": {
-          "Mono.Cecil": "0.11.5",
           "MonoMod.RuntimeDetour": "21.12.13.1"
         }
       },
       "MonoDetour.HookGen": {
         "type": "Direct",
         "requested": "[0.7.*, )",
-        "resolved": "0.7.3",
-        "contentHash": "82nNksQf2HHpoTt0QhWY+uWCkA9gYE4H+7fbBI2IOa+TVe4In838/XogX/5Lx6EhXXF58qV4XWvwFxmmdg/YQw==",
+        "resolved": "0.7.6",
+        "contentHash": "LVaOXo0eBk1LbR9gfrEd7e2YfB8ha5LgEzGOvq8XVtEyGZpNMABkd6LmROFWaqRZ3YL7HS+PNCKTds41fW5F8w==",
         "dependencies": {
           "MonoDetour": "0.5.0"
         }
@@ -62,8 +61,8 @@
       "Silksong.GameLibs": {
         "type": "Direct",
         "requested": "[*-*, )",
-        "resolved": "1.1.0-silksong1.0.29315",
-        "contentHash": "HHAt52uzuBXi8cn90/D7WC7YEptcW9yST5fo43lThzRaN6d/TLiXhy7d1Cv3UyACTnryKqINSYPqa2hSbLR+Qg=="
+        "resolved": "1.2.0-silksong1.0.29315",
+        "contentHash": "MwcUC0FMUn7aCwYHWgQegOBxNGgNBDie9nfg0GeodqbnfrHOjUZ06sZjq+0Iiz9/WBL8yd511YZujFS91FgVMw=="
       },
       "Silksong.UnityHelper": {
         "type": "Direct",
@@ -99,8 +98,8 @@
       },
       "Mono.Cecil": {
         "type": "Transitive",
-        "resolved": "0.11.5",
-        "contentHash": "fxfX+0JGTZ8YQeu1MYjbBiK2CYTSzDyEeIixt+yqKKTn7FW8rv7JMY70qevup4ZJfD7Kk/VG/jDzQQTpfch87g=="
+        "resolved": "0.11.4",
+        "contentHash": "IC1h5g0NeJGHIUgzM1P82ld57knhP0IcQfrYITDPXlNpMYGUrsG5TxuaWTjaeqDNQMBDNZkB8L0rBnwsY6JHuQ=="
       },
       "MonoMod.RuntimeDetour": {
         "type": "Transitive",
